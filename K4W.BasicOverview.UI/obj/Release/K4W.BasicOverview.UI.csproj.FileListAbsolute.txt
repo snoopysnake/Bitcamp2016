@@ -1,0 +1,30 @@
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\bin\Release\K4W.BasicOverview.UI.exe.config
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\bin\Release\K4W.BasicOverview.UI.exe
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\bin\Release\K4W.BasicOverview.UI.pdb
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\bin\Release\Microsoft.Kinect.dll
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\bin\Release\Microsoft.Kinect.xml
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.csprojResolveAssemblyReference.cache
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\obj\Release\MainWindow.baml
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\obj\Release\MainWindow.g.cs
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\obj\Release\App.g.cs
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI_MarkupCompile.cache
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.g.resources
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.Properties.Resources.resources
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.csproj.GenerateResource.Cache
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.exe
+C:\Users\Michael\Documents\Alex\SpeechBubblesForKinect\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.pdb
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\bin\Release\K4W.BasicOverview.UI.exe.config
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.exe
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.pdb
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\bin\Release\K4W.BasicOverview.UI.exe
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\bin\Release\K4W.BasicOverview.UI.pdb
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\bin\Release\Microsoft.Kinect.dll
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\bin\Release\Microsoft.Kinect.xml
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.csprojResolveAssemblyReference.cache
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\MainWindow.baml
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\MainWindow.g.cs
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\App.g.cs
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI_MarkupCompile.cache
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.g.resources
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.Properties.Resources.resources
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.csproj.GenerateResource.Cache
