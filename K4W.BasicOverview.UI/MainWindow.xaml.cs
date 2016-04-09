@@ -13,6 +13,9 @@ namespace K4W.BasicOverview.UI
 {
     public partial class MainWindow : Window
     {
+
+        private Dictionary<JointType, bool> jointMap = new Dictionary<JointType, bool>();
+
         /// <summary>
         /// Size fo the RGB pixel in bitmap
         /// </summary>
@@ -97,6 +100,10 @@ namespace K4W.BasicOverview.UI
         /// </summary>
         public MainWindow()
         {
+            // Default the feet and hands to true
+            jointMap.Add(JointType.FootLeft, true);
+            jointMap.Add(JointType.FootRight, true);
+
             InitializeComponent();
 
             // Initialize Kinect
@@ -447,53 +454,62 @@ namespace K4W.BasicOverview.UI
         /// <param name="body">Tracked body</param>
         private void DrawBody(Body body)
         {
+            int largestRadius = 20;
+            int bigRadius = 10;
+            int smallRadius = 7;
             // Draw points
             foreach (JointType type in body.Joints.Keys)
             {
-                // Draw all the body joints
-                switch (type)
+                if (jointMap.ContainsKey(type) && jointMap[type])
                 {
-                    //case JointType.Head:
-                    //    DrawJoint(body.Joints[type], 20, Brushes.Yellow, 2, Brushes.White);
-                    //    Console.WriteLine(body.Joints[type].Position.Z);
-                    //    break;
-                    case JointType.FootLeft:
-                    case JointType.FootRight:
-                        DrawJoint(body.Joints[type], 20, Brushes.Yellow, 2, Brushes.Yellow);
-                        break;
-                    //    DrawJoint(body.Joints[type], 20, Brushes.Yellow, 2, Brushes.White);
-                    //    break;
-                    //case JointType.ShoulderLeft:
-                    //case JointType.ShoulderRight:
-                    case JointType.HipLeft:
-                    case JointType.HipRight:
-                        DrawJoint(body.Joints[type], 15, Brushes.Violet, 2, Brushes.Violet);
-                        break;
-                    //    DrawJoint(body.Joints[type], 20, Brushes.YellowGreen, 2, Brushes.White);
-                    //    break;
-                    //case JointType.ElbowLeft:
-                    //case JointType.ElbowRight:
-                    //case JointType.KneeLeft:
-                    //case JointType.KneeRight:
-                    //    DrawJoint(body.Joints[type], 15, Brushes.LawnGreen, 2, Brushes.White);
-                    //    break;
-                    case JointType.HandLeft:
-                    case JointType.HandRight:
-                        DrawHandJoint(body.Joints[type], body.HandRightState, 20, 2, Brushes.Red);
-                        break;
-                    case JointType.SpineBase:
-                        DrawJoint(body.Joints[type], 15, Brushes.Blue, 2, Brushes.Blue);
-                        break;
-                    case JointType.SpineMid:
-                        DrawJoint(body.Joints[type], 15, Brushes.SlateBlue, 2, Brushes.SlateBlue);
-                        break;
-                    case JointType.SpineShoulder:
-                        DrawJoint(body.Joints[type], 15, Brushes.SkyBlue, 2, Brushes.SkyBlue);
-                        break;
-                        //default:
-                        //    DrawJoint(body.Joints[type], 15, Brushes.RoyalBlue, 2, Brushes.White);
+                    // Draw all the body joints
+                    switch (type)
+                    {
+                        //case JointType.Head:
+                        //    DrawJoint(body.Joints[type], 20, Brushes.Yellow, 2, Brushes.White);
+                        //    Console.WriteLine(body.Joints[type].Position.Z);
                         //    break;
+                        case JointType.FootLeft:
+                        case JointType.FootRight:
+                            DrawJoint(body.Joints[type], largestRadius, Brushes.Yellow, 2, Brushes.Yellow);
+                            break;
+                        //    DrawJoint(body.Joints[type], 20, Brushes.Yellow, 2, Brushes.White);
+                        //    break;
+                        case JointType.ShoulderLeft:
+                        case JointType.ShoulderRight:
+                            DrawJoint(body.Joints[type], bigRadius, Brushes.Purple, 2, Brushes.Purple);
+                            break;
+                        case JointType.HipLeft:
+                        case JointType.HipRight:
+                            DrawJoint(body.Joints[type], smallRadius, Brushes.Violet, 2, Brushes.Violet);
+                            break;
+                        //    DrawJoint(body.Joints[type], 20, Brushes.YellowGreen, 2, Brushes.White);
+                        //    break;
+                        //case JointType.ElbowLeft:
+                        //case JointType.ElbowRight:
+                        case JointType.KneeLeft:
+                        case JointType.KneeRight:
+                            DrawJoint(body.Joints[type], smallRadius, Brushes.LawnGreen, 2, Brushes.White);
+                            break;
+                        case JointType.HandLeft:
+                        case JointType.HandRight:
+                            DrawHandJoint(body.Joints[type], body.HandRightState, largestRadius, 2, Brushes.Red);
+                            break;
+                            //case JointType.SpineBase:
+                            //    DrawJoint(body.Joints[type], 15, Brushes.Blue, 2, Brushes.Blue);
+                            //    break;
+                            //case JointType.SpineMid:
+                            //    DrawJoint(body.Joints[type], 15, Brushes.SlateBlue, 2, Brushes.SlateBlue);
+                            //    break;
+                            //case JointType.SpineShoulder:
+                            //    DrawJoint(body.Joints[type], 15, Brushes.SkyBlue, 2, Brushes.SkyBlue);
+                            //    break;
+                            //default:
+                            //    DrawJoint(body.Joints[type], 15, Brushes.RoyalBlue, 2, Brushes.White);
+                            //    break;
+                    }
                 }
+                
             }
         }
 
@@ -528,6 +544,14 @@ namespace K4W.BasicOverview.UI
             cb.Height = radius;
             cb.Width = radius;
 
+            //hand
+            Ellipse te = new Ellipse();
+            te.Fill = fill;
+            te.Stroke = border;
+            te.Height = radius;
+            te.Width = radius;
+            te.Opacity = 0.25f;
+
             TextBlock tb = new TextBlock();
             tb.Text = joint.Position.Y.ToString();
             tb.FontSize = 34;
@@ -537,9 +561,10 @@ namespace K4W.BasicOverview.UI
             //bar path
             if (trackingBarPath)
             {
-                Canvas.SetLeft(cb, colorPoint.X / 2 - radius/2);
-                Canvas.SetTop(cb, colorPoint.Y / 2 - radius/2);
-                myCanvas.Children.Add(cb);
+                //if (joint.JointType.Equals(JointType.HandLeft) || joint.JointType.Equals(JointType.HandRight)) {
+                Canvas.SetLeft(te, colorPoint.X / 2 - radius / 2);
+                Canvas.SetTop(te, colorPoint.Y / 2 - radius / 2);
+                myCanvas.Children.Add(te);
 
                 Button button = new Button { Content = "Button", Width = 100, Height = 25 };
                 button.Click += closeButton;
@@ -548,11 +573,12 @@ namespace K4W.BasicOverview.UI
 
                 testWindow.Content = myCanvas;
                 testWindow.Show();
+                //}
             }
 
             // Add the Ellipse to the canvas
             //SkeletonCanvas.Children.Add(el);
-            //SkeletonCanvas.Children.Add(cb);
+            SkeletonCanvas.Children.Add(cb);
             //SkeletonCanvas.Children.Add(tb);
 
             // Avoid exceptions based on bad tracking
@@ -572,6 +598,113 @@ namespace K4W.BasicOverview.UI
             //exports and closes
             trackingBarPath = false;
             testWindow.Close();
+        }
+
+        private void HandleCheckboxChange(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+
+            if ((bool) checkBox.IsChecked)
+            {
+                switch (checkBox.Name)
+                {
+                    case "FeetCheckbox":
+                        if (!jointMap.ContainsKey(JointType.FootRight))
+                        {
+                            jointMap.Add(JointType.FootRight, true);
+                        }
+                        if (!jointMap.ContainsKey(JointType.FootLeft))
+                        {
+                            jointMap.Add(JointType.FootLeft, true);
+                        }
+
+                        jointMap[JointType.FootLeft] = true;
+                        jointMap[JointType.FootRight] = true;
+                        break;
+                    case "HandsCheckbox":
+                        if (!jointMap.ContainsKey(JointType.HandRight))
+                        {
+                            jointMap.Add(JointType.HandRight, true);
+                        }
+                        if (!jointMap.ContainsKey(JointType.HandLeft))
+                        {
+                            jointMap.Add(JointType.HandLeft, true);
+                        }
+
+                        jointMap[JointType.HandLeft] = true;
+                        jointMap[JointType.HandRight] = true;
+                        break;
+                    case "ShouldersCheckbox":
+                        if (!jointMap.ContainsKey(JointType.ShoulderRight))
+                        {
+                            jointMap.Add(JointType.ShoulderRight, true);
+                        }
+                        if (!jointMap.ContainsKey(JointType.ShoulderLeft))
+                        {
+                            jointMap.Add(JointType.ShoulderLeft, true);
+                        }
+
+                        jointMap[JointType.ShoulderLeft] = true;
+                        jointMap[JointType.ShoulderRight] = true;
+                        break;
+                    case "HipsCheckbox":
+                        if (!jointMap.ContainsKey(JointType.HipRight))
+                        {
+                            jointMap.Add(JointType.HipRight, true);
+                        }
+                        if (!jointMap.ContainsKey(JointType.HipLeft))
+                        {
+                            jointMap.Add(JointType.HipLeft, true);
+                        }
+
+                        jointMap[JointType.HipLeft] = true;
+                        jointMap[JointType.HipRight] = true;
+                        break;
+                    case "KneesCheckbox":
+                        if (!jointMap.ContainsKey(JointType.KneeRight))
+                        {
+                            jointMap.Add(JointType.KneeRight, true);
+                        }
+                        if (!jointMap.ContainsKey(JointType.KneeLeft))
+                        {
+                            jointMap.Add(JointType.KneeLeft, true);
+                        }
+
+                        jointMap[JointType.KneeLeft] = true;
+                        jointMap[JointType.KneeRight] = true;
+                        break;
+                    default:
+                        break;
+                }
+            } else
+            {
+                switch (checkBox.Name)
+                {
+                    case "FeetCheckbox":
+                        jointMap[JointType.FootLeft] = false;
+                        jointMap[JointType.FootRight] = false;
+                        break;
+                    case "HandsCheckbox":
+                        jointMap[JointType.HandRight] = false;
+                        jointMap[JointType.HandLeft] = false;
+                        break;
+                    case "ShouldersCheckbox":
+                        jointMap[JointType.ShoulderRight] = false;
+                        jointMap[JointType.ShoulderLeft] = false;
+                        break;
+                    case "HipsCheckbox":
+                        jointMap[JointType.HipRight] = false;
+                        jointMap[JointType.HipLeft] = false;
+                        break;
+                    case "KneesCheckbox":
+                        jointMap[JointType.KneeLeft] = false;
+                        jointMap[JointType.KneeRight] = false;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
         }
 
         /// <summary>
