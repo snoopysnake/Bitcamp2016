@@ -122,7 +122,6 @@ namespace K4W.BasicOverview.UI
             if (_kinect != null) _kinect.Close();
         }
 
-
         #region INITIALISATION
         /// <summary>
         /// Initialize Kinect Sensor
@@ -457,6 +456,8 @@ namespace K4W.BasicOverview.UI
             int largestRadius = 20;
             int bigRadius = 10;
             int smallRadius = 7;
+
+            
             // Draw points
             foreach (JointType type in body.Joints.Keys)
             {
@@ -514,6 +515,88 @@ namespace K4W.BasicOverview.UI
         }
 
 
+        private void TakeSnapshotOfWorld(object sender, RoutedEventArgs e)
+        {
+            
+            RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)CameraImage.ActualWidth, (int)CameraImage.ActualHeight, 96.0, 96.0, PixelFormats.Pbgra32);
+            DrawingVisual dv = new DrawingVisual();
+            using (DrawingContext dc = dv.RenderOpen())
+            {
+                VisualBrush brush = new VisualBrush(CameraImage);
+                dc.DrawRectangle(brush, null, new Rect(new Point(), new Size(CameraImage.ActualWidth, CameraImage.ActualHeight)));
+            }
+            renderBitmap.Render(dv);
+
+            BitmapEncoder encoder = new PngBitmapEncoder();
+
+            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+
+
+            var timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
+            var myPhotos = String.Format("{0}\\{1}", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Photobooth");
+            var fileName = String.Format("KinectPhotobooth-{0}.png", timestamp);
+
+            var path = System.IO.Path.Combine(myPhotos, fileName);
+
+            try
+            {
+                using (System.IO.FileStream fs = new System.IO.FileStream(path, System.IO.FileMode.Create))
+                {
+                    encoder.Save(fs);
+                }
+
+
+                encoder = null;
+            }
+            catch (System.IO.IOException)
+            {
+                Console.WriteLine("Fuck");
+            }
+
+        }
+
+        private void TakeSnapshotOfBarPath(object sender, RoutedEventArgs e)
+        {
+
+            RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)myCanvas.ActualWidth, (int)myCanvas.ActualHeight, 96.0, 96.0, PixelFormats.Pbgra32);
+            DrawingVisual dv = new DrawingVisual();
+            using (DrawingContext dc = dv.RenderOpen())
+            {
+                VisualBrush brush = new VisualBrush(myCanvas);
+                dc.DrawRectangle(brush, null, new Rect(new Point(), new Size(myCanvas.ActualWidth, myCanvas.ActualHeight)));
+            }
+
+            renderBitmap.Render(dv);
+
+            BitmapEncoder encoder = new PngBitmapEncoder();
+
+            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+
+
+            var timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
+            var myPhotos = String.Format("{0}\\{1}", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Photobooth");
+            var fileName = String.Format("KinectPhotobooth-{0}.png", timestamp);
+
+            var path = System.IO.Path.Combine(myPhotos, fileName);
+
+            try
+            {
+                using (System.IO.FileStream fs = new System.IO.FileStream(path, System.IO.FileMode.Create))
+                {
+                    encoder.Save(fs);
+                }
+
+
+                encoder = null;
+
+            }
+            catch (System.IO.IOException)
+            {
+                Console.WriteLine("Fuck");
+            }
+                        
+        }
+
         /// <summary>
         /// Draws a body joint
         /// </summary>
@@ -561,19 +644,14 @@ namespace K4W.BasicOverview.UI
             //bar path
             if (trackingBarPath)
             {
-                //if (joint.JointType.Equals(JointType.HandLeft) || joint.JointType.Equals(JointType.HandRight)) {
+
                 Canvas.SetLeft(te, colorPoint.X / 2 - radius / 2);
                 Canvas.SetTop(te, colorPoint.Y / 2 - radius / 2);
                 myCanvas.Children.Add(te);
 
-                Button button = new Button { Content = "Button", Width = 100, Height = 25 };
-                button.Click += closeButton;
-                Canvas.SetBottom(button, 50);
-                myCanvas.Children.Add(button);
 
                 testWindow.Content = myCanvas;
                 testWindow.Show();
-                //}
             }
 
             // Add the Ellipse to the canvas
@@ -593,7 +671,7 @@ namespace K4W.BasicOverview.UI
             Canvas.SetTop(cb, colorPoint.Y / 2 - radius/2);
         }
 
-        void closeButton(Object sender, EventArgs e)
+        void closeButtonHandler(Object sender, EventArgs e)
         {
             //exports and closes
             trackingBarPath = false;
@@ -722,10 +800,11 @@ namespace K4W.BasicOverview.UI
                 //case HandState.Open:
                 //    DrawJoint(joint, radius, Brushes.Green, borderWidth, border);
                 //    break;
-                case HandState.Closed:
-                    DrawJoint(joint, radius, Brushes.Red, borderWidth, border);
-                    break;
+                //case HandState.Closed:
+                //    DrawJoint(joint, radius, Brushes.Red, borderWidth, border);
+                //    break;
                 default:
+                    DrawJoint(joint, radius, Brushes.Red, borderWidth, border);
                     //DrawJoint(joint, radius, Brushes.Yellow, borderWidth, border);
                     break;
             }
@@ -754,6 +833,17 @@ namespace K4W.BasicOverview.UI
             testWindow = new Window();
             myCanvas = new Canvas();
             myCanvas.Background = Brushes.Transparent;
+
+
+            Button closeButton = new Button { Content = "Close", Width = 100, Height = 25 };
+            Button recordButton = new Button { Content = "Take Picture", Width = 100, Height = 25 };
+            closeButton.Click += closeButtonHandler;
+            recordButton.Click += TakeSnapshotOfBarPath;
+            Canvas.SetBottom(closeButton, 25);
+            Canvas.SetBottom(recordButton, 0);
+            myCanvas.Children.Add(closeButton);
+            myCanvas.Children.Add(recordButton);
+
             testWindow.Title = "Canvas Sample";
             testWindow.Content = myCanvas;
             testWindow.Show();
