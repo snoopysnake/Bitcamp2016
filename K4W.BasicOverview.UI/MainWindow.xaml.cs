@@ -6,15 +6,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Drawing;
-
 using Microsoft.Kinect;
 
 namespace K4W.BasicOverview.UI
 {
     public partial class MainWindow : Window
     {
-
+        private double feetDistance;
         private Dictionary<JointType, bool> jointMap = new Dictionary<JointType, bool>();
+        private Dictionary<String, bool> statMap = new Dictionary<string, bool>();
+        private TextBlock distanceText;
 
         /// <summary>
         /// Size fo the RGB pixel in bitmap
@@ -103,6 +104,8 @@ namespace K4W.BasicOverview.UI
             // Default the feet and hands to true
             jointMap.Add(JointType.FootLeft, true);
             jointMap.Add(JointType.FootRight, true);
+
+            statMap.Add("feetDistance", true);
 
             InitializeComponent();
 
@@ -441,6 +444,7 @@ namespace K4W.BasicOverview.UI
                     // Only process tracked bodies
                     if (body.IsTracked)
                     {
+                        Console.WriteLine(frame.RelativeTime);
                         DrawBody(body);
                     }
                 }
@@ -472,6 +476,8 @@ namespace K4W.BasicOverview.UI
                         //    break;
                         case JointType.FootLeft:
                         case JointType.FootRight:
+                            feetDistance = calculateFeet(body.Joints[JointType.FootLeft], body.Joints[JointType.FootRight]);
+                            Console.WriteLine(feetDistance);
                             DrawJoint(body.Joints[type], largestRadius, Brushes.Yellow, 2, Brushes.Yellow);
                             break;
                         //    DrawJoint(body.Joints[type], 20, Brushes.Yellow, 2, Brushes.White);
@@ -644,11 +650,16 @@ namespace K4W.BasicOverview.UI
             //bar path
             if (trackingBarPath)
             {
-
+                
                 Canvas.SetLeft(te, colorPoint.X / 2 - radius / 2);
                 Canvas.SetTop(te, colorPoint.Y / 2 - radius / 2);
+
                 myCanvas.Children.Add(te);
 
+                if (statMap["feetDistance"])
+                {
+                    distanceText.Text = feetDistance.ToString();
+                }
 
                 testWindow.Content = myCanvas;
                 testWindow.Show();
@@ -671,11 +682,38 @@ namespace K4W.BasicOverview.UI
             Canvas.SetTop(cb, colorPoint.Y / 2 - radius/2);
         }
 
+        double calculateFeet(Joint jointLeft, Joint jointRight)
+        {
+            //ColorSpacePoint colorPoint = _kinect.CoordinateMapper.MapCameraPointToColorSpace(jointLeft.Position);
+
+            Line line = new Line();
+            line.X1 = jointLeft.Position.X;
+            line.X2 = jointRight.Position.X;
+            line.Y1 = jointLeft.Position.Y;
+            line.Y2 = jointRight.Position.Y;
+            line.StrokeThickness = 5;
+            SolidColorBrush color = new SolidColorBrush();
+            color.Color = Colors.Black;
+            line.Stroke = color;
+            //Canvas.SetLeft(line, colorPoint.X / 2);
+            //Canvas.SetBottom(line, colorPoint.Y / 2);
+            SkeletonCanvas.Children.Add(line);
+            return Math.Abs(jointLeft.Position.X - jointRight.Position.X);
+        }
+
         void closeButtonHandler(Object sender, EventArgs e)
         {
             //exports and closes
             trackingBarPath = false;
             testWindow.Close();
+        }
+
+        private void HandleStatsCheckboxChange()
+        {
+            Console.WriteLine("Stats Change");
+
+
+
         }
 
         private void HandleCheckboxChange(object sender, RoutedEventArgs e)
@@ -843,6 +881,16 @@ namespace K4W.BasicOverview.UI
             Canvas.SetBottom(recordButton, 0);
             myCanvas.Children.Add(closeButton);
             myCanvas.Children.Add(recordButton);
+
+
+            if (statMap["feetDistance"])
+            {
+                distanceText = new TextBlock();
+                distanceText.Text = "0.0";
+                distanceText.FontSize = 34;
+                myCanvas.Children.Add(distanceText);
+
+            }
 
             testWindow.Title = "Canvas Sample";
             testWindow.Content = myCanvas;

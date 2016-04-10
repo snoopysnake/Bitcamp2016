@@ -28,3 +28,5 @@ C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOver
 C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.g.resources
 C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.Properties.Resources.resources
 C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\Release\K4W.BasicOverview.UI.csproj.GenerateResource.Cache
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\bin\Release\LightBuzz.Vitruvius.dll
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\bin\Release\LightBuzz.Vitruvius.xml
