@@ -7,15 +7,22 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Drawing;
 using Microsoft.Kinect;
+using System.Windows.Media.Media3D;
 
 namespace K4W.BasicOverview.UI
 {
     public partial class MainWindow : Window
     {
         private double feetDistance;
+        private double distanceInFront;
+        private double distanceInBack;
         private Dictionary<JointType, bool> jointMap = new Dictionary<JointType, bool>();
         private Dictionary<String, bool> statMap = new Dictionary<string, bool>();
         private TextBlock distanceText;
+        private double[] feetData = new double[3];
+        private double[] barbellData = new double[2];
+        private double deepest;
+        private Boolean buttonClick = false;
 
         /// <summary>
         /// Size fo the RGB pixel in bitmap
@@ -444,8 +451,9 @@ namespace K4W.BasicOverview.UI
                     // Only process tracked bodies
                     if (body.IsTracked)
                     {
-                        Console.WriteLine(frame.RelativeTime);
                         DrawBody(body);
+                        checkDepth(body);
+                        barbellEvenness(body);
                     }
                 }
             }
@@ -476,8 +484,21 @@ namespace K4W.BasicOverview.UI
                         //    break;
                         case JointType.FootLeft:
                         case JointType.FootRight:
-                            feetDistance = calculateFeet(body.Joints[JointType.FootLeft], body.Joints[JointType.FootRight]);
-                            Console.WriteLine(feetDistance);
+                            feetDistance = calculateFeet(body.Joints[JointType.FootLeft],
+                                    body.Joints[JointType.FootRight]);
+                            distanceInFront = calculateFrontFoot(body.Joints[JointType.FootLeft],
+                                body.Joints[JointType.FootRight]);
+                            distanceInBack = calculateBackFoot(body.Joints[JointType.FootRight],
+                                body.Joints[JointType.FootLeft]);
+                            if (buttonClick)
+                            {
+                                feetData[0] = feetDistance;
+                                feetData[1] = distanceInFront;
+                                feetData[2] = distanceInBack;
+                                buttonClick = false;
+                            }
+                            //createLine(body.Joints[JointType.FootLeft],
+                            //    body.Joints[JointType.FootRight], largestRadius, 5);
                             DrawJoint(body.Joints[type], largestRadius, Brushes.Yellow, 2, Brushes.Yellow);
                             break;
                         //    DrawJoint(body.Joints[type], 20, Brushes.Yellow, 2, Brushes.White);
@@ -500,6 +521,8 @@ namespace K4W.BasicOverview.UI
                             break;
                         case JointType.HandLeft:
                         case JointType.HandRight:
+                            //createLine(body.Joints[JointType.HandLeft],
+                            //    body.Joints[JointType.HandRight], largestRadius, 15);
                             DrawHandJoint(body.Joints[type], body.HandRightState, largestRadius, 2, Brushes.Red);
                             break;
                             //case JointType.SpineBase:
@@ -520,6 +543,48 @@ namespace K4W.BasicOverview.UI
             }
         }
 
+        void checkDepth(Body body)
+        {
+            Joint leftHip = body.Joints[JointType.HipLeft];
+            Joint rightHip = body.Joints[JointType.HipRight];
+            Joint leftKnee = body.Joints[JointType.KneeLeft];
+            Joint rightKnee = body.Joints[JointType.KneeRight];
+            Joint spine = body.Joints[JointType.SpineMid];
+            Vector3D leftFemur = new Vector3D(Math.Abs(spine.Position.X - leftHip.Position.X), 
+                Math.Abs(spine.Position.Y - leftHip.Position.Y), Math.Abs(spine.Position.Z - leftHip.Position.Z));
+            Vector3D leftTibia = new Vector3D(Math.Abs(leftKnee.Position.X - leftHip.Position.X),
+                Math.Abs(leftKnee.Position.Y - leftHip.Position.Y), Math.Abs(leftKnee.Position.Z - leftHip.Position.Z));
+
+            //Console.WriteLine(Vector3D.AngleBetween(leftFemur, leftTibia));
+
+            if (leftHip.Position.Y < leftKnee.Position.Y && rightHip.Position.Y < rightKnee.Position.Y)
+            {
+                DepthChecker.Text = "Good Squat";
+                DepthChecker.FontSize = 34;
+            } else
+            {
+                DepthChecker.Text = "Depth Checking..";
+            }
+        }
+
+        void barbellHeight(Body body)
+        {
+            double leftHand = body.Joints[JointType.HandLeft].Position.Y;
+            double rightHand = body.Joints[JointType.HandRight].Position.Y;
+            double midpoint = (leftHand + rightHand) / 2;
+
+        }
+
+        double barbellEvenness(Body body)
+        {
+            double leftHandX = body.Joints[JointType.HandLeft].Position.X;
+            double leftHandY = body.Joints[JointType.HandLeft].Position.Y;
+            double rightHandX = body.Joints[JointType.HandRight].Position.X;
+            double rightHandY = body.Joints[JointType.HandRight].Position.Y;
+            double angle = Math.Atan(Math.Abs(leftHandY - rightHandY) / Math.Abs(rightHandY - rightHandX)) * 180 / Math.PI;
+            BarAngle.Text = Math.Round(angle, 2).ToString();
+            return Math.Round(angle,2);
+        }
 
         private void TakeSnapshotOfWorld(object sender, RoutedEventArgs e)
         {
@@ -558,48 +623,47 @@ namespace K4W.BasicOverview.UI
             {
                 Console.WriteLine("Fuck");
             }
-
         }
-
+        bool recording = false;
         private void TakeSnapshotOfBarPath(object sender, RoutedEventArgs e)
         {
+            recording = true;
+            //RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)myCanvas.ActualWidth, (int)myCanvas.ActualHeight, 96.0, 96.0, PixelFormats.Pbgra32);
+            //DrawingVisual dv = new DrawingVisual();
+            //using (DrawingContext dc = dv.RenderOpen())
+            //{
+            //    VisualBrush brush = new VisualBrush(myCanvas);
+            //    dc.DrawRectangle(brush, null, new Rect(new Point(), new Size(myCanvas.ActualWidth, myCanvas.ActualHeight)));
+            //}
 
-            RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)myCanvas.ActualWidth, (int)myCanvas.ActualHeight, 96.0, 96.0, PixelFormats.Pbgra32);
-            DrawingVisual dv = new DrawingVisual();
-            using (DrawingContext dc = dv.RenderOpen())
-            {
-                VisualBrush brush = new VisualBrush(myCanvas);
-                dc.DrawRectangle(brush, null, new Rect(new Point(), new Size(myCanvas.ActualWidth, myCanvas.ActualHeight)));
-            }
+            //renderBitmap.Render(dv);
 
-            renderBitmap.Render(dv);
+            //BitmapEncoder encoder = new PngBitmapEncoder();
 
-            BitmapEncoder encoder = new PngBitmapEncoder();
-
-            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
-
-
-            var timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
-            var myPhotos = String.Format("{0}\\{1}", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Photobooth");
-            var fileName = String.Format("KinectPhotobooth-{0}.png", timestamp);
-
-            var path = System.IO.Path.Combine(myPhotos, fileName);
-
-            try
-            {
-                using (System.IO.FileStream fs = new System.IO.FileStream(path, System.IO.FileMode.Create))
-                {
-                    encoder.Save(fs);
-                }
+            //encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
 
 
-                encoder = null;
+            //var timestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
+            //var myPhotos = String.Format("{0}\\{1}", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Photobooth");
+            //var fileName = String.Format("KinectPhotobooth-{0}.png", timestamp);
 
-            }
-            catch (System.IO.IOException)
-            {
-                Console.WriteLine("Fuck");
-            }
+            //var path = System.IO.Path.Combine(myPhotos, fileName);
+
+            //try
+            //{
+            //    using (System.IO.FileStream fs = new System.IO.FileStream(path, System.IO.FileMode.Create))
+            //    {
+            //        encoder.Save(fs);
+            //    }
+
+
+            //    encoder = null;
+
+            //}
+            //catch (System.IO.IOException)
+            //{
+            //    Console.WriteLine("Fuck");
+            //}
                         
         }
 
@@ -654,11 +718,20 @@ namespace K4W.BasicOverview.UI
                 Canvas.SetLeft(te, colorPoint.X / 2 - radius / 2);
                 Canvas.SetTop(te, colorPoint.Y / 2 - radius / 2);
 
-                myCanvas.Children.Add(te);
+                if (recording)
+                    myCanvas.Children.Add(te);
 
                 if (statMap["feetDistance"])
                 {
-                    distanceText.Text = feetDistance.ToString();
+                    distanceText.Text = "INIT: " + Math.Round(feetData[0], 2).ToString() + " " +
+                        Math.Round(feetData[1], 2).ToString() + " " +
+                        Math.Round(feetData[2], 2).ToString() + " CURRENT: " +
+                        Math.Round(feetDistance,2).ToString() + " " + 
+                        Math.Round(distanceInFront,2).ToString() + " " +
+                        Math.Round(distanceInBack,2).ToString() + " r: " +
+                        Math.Round(Math.Abs(feetData[0]-feetDistance)/ feetData[0],2)*100 + "%, " +
+                        Math.Round(Math.Abs(feetData[1]-distanceInFront)/ feetData[1],2)*100 + "%, " +
+                        Math.Round(Math.Abs(feetData[2]-distanceInBack)/ feetData[2],2)*100 + "%";
                 }
 
                 testWindow.Content = myCanvas;
@@ -677,28 +750,95 @@ namespace K4W.BasicOverview.UI
             //Canvas.SetLeft(el, colorPoint.X / 2);
             //Canvas.SetTop(el, colorPoint.Y / 2);
 
-            
+
+
+            //if (joint.JointType == JointType.FootLeft)
+            //{
+            //    //TextBlock tb = new TextBlock();
+            //    //tb.Text = joint.Position.Y.ToString();
+            //    //tb.FontSize = 34;
+            //    //tb.Width = cb.Width;
+            //    //tb.Height = cb.Height;
+            //    Line line = new Line();
+
+            //    line.X1 = colorPoint.X / 2 - radius / 2;
+            //    line.Y1 = colorPoint.Y / 2 - radius / 2;
+
+            //    line.X2 = colorPoint.X / 2 - radius / 2;
+            //    line.Y2 = colorPoint.Y / 2 - radius / 2;
+
+            //    line.StrokeThickness = 50;
+            //    SolidColorBrush color = new SolidColorBrush();
+            //    color.Color = Colors.Yellow;
+            //    line.Stroke = color;
+            //    SkeletonCanvas.Children.Add(line);
+            //}
+
             Canvas.SetLeft(cb, colorPoint.X / 2 - radius/2);
             Canvas.SetTop(cb, colorPoint.Y / 2 - radius/2);
         }
 
-        double calculateFeet(Joint jointLeft, Joint jointRight)
+        void createLine(Joint jointLeft, Joint jointRight, int radius, int thickness)
         {
-            //ColorSpacePoint colorPoint = _kinect.CoordinateMapper.MapCameraPointToColorSpace(jointLeft.Position);
+            ColorSpacePoint colorPoint1 = _kinect.CoordinateMapper.MapCameraPointToColorSpace(jointLeft.Position);
+            ColorSpacePoint colorPoint2 = _kinect.CoordinateMapper.MapCameraPointToColorSpace(jointRight.Position);
 
             Line line = new Line();
-            line.X1 = jointLeft.Position.X;
-            line.X2 = jointRight.Position.X;
-            line.Y1 = jointLeft.Position.Y;
-            line.Y2 = jointRight.Position.Y;
-            line.StrokeThickness = 5;
+
+            float x1 = colorPoint1.X / 2 - radius / 2;
+            float y1 = colorPoint1.Y / 2 - radius / 2;
+            float x2 = colorPoint2.X / 2 - radius / 2;
+            float y2 = colorPoint2.Y / 2 - radius / 2;
+
+            if (x1 == Double.NegativeInfinity || y1 == Double.NegativeInfinity)
+            {
+                line.X1 = 0;
+                line.Y1 = 0;
+                line.X2 = 0;
+                line.Y2 = 0;
+            }
+            else
+            {
+                line.X1 = x1;
+                line.Y1 = y1;
+            }
+
+            if (x2 == Double.NegativeInfinity || y2 == Double.NegativeInfinity)
+            {
+                line.X1 = 0;
+                line.Y1 = 0;
+                line.X2 = 0;
+                line.Y2 = 0;
+            }
+            else
+            {
+                line.X2 = x2;
+                line.Y2 = y2;
+            }
+
+            line.StrokeThickness = thickness;
             SolidColorBrush color = new SolidColorBrush();
-            color.Color = Colors.Black;
+            color.Color = Colors.Yellow;
             line.Stroke = color;
-            //Canvas.SetLeft(line, colorPoint.X / 2);
-            //Canvas.SetBottom(line, colorPoint.Y / 2);
             SkeletonCanvas.Children.Add(line);
+        }
+
+        double calculateFeet(Joint jointLeft, Joint jointRight)
+        {
             return Math.Abs(jointLeft.Position.X - jointRight.Position.X);
+        }
+
+        double calculateFrontFoot(Joint jointLeft, Joint jointRight)
+        {
+            //changed head to midpoint of distance
+            double midpoint = calculateFeet(jointLeft, jointRight)/2;
+            return Math.Abs(jointLeft.Position.X - midpoint);
+        }
+
+        double calculateBackFoot(Joint jointRight, Joint jointLeft)
+        {
+            double midpoint = calculateFeet(jointLeft, jointRight)/2;
+            return Math.Abs(jointRight.Position.X - midpoint);
         }
 
         void closeButtonHandler(Object sender, EventArgs e)
@@ -710,7 +850,6 @@ namespace K4W.BasicOverview.UI
 
         private void HandleStatsCheckboxChange()
         {
-            Console.WriteLine("Stats Change");
 
 
 
@@ -737,6 +876,7 @@ namespace K4W.BasicOverview.UI
                         jointMap[JointType.FootLeft] = true;
                         jointMap[JointType.FootRight] = true;
                         break;
+
                     case "HandsCheckbox":
                         if (!jointMap.ContainsKey(JointType.HandRight))
                         {
@@ -830,6 +970,7 @@ namespace K4W.BasicOverview.UI
         /// <param name="handState">State of the hand</param>
         private void DrawHandJoint(Joint joint, HandState handState, double radius, double borderWidth, SolidColorBrush border)
         {
+
             switch (handState)
             {
                 //case HandState.Lasso:
@@ -874,19 +1015,29 @@ namespace K4W.BasicOverview.UI
 
 
             Button closeButton = new Button { Content = "Close", Width = 100, Height = 25 };
-            Button recordButton = new Button { Content = "Take Picture", Width = 100, Height = 25 };
+            Button recordButton = new Button { Content = "Start Recording", Width = 100, Height = 25 };
+            Button initButton = new Button { Content = "Initial Position", Width = 100, Height = 25 };
+            Button stopButton = new Button { Content = "Stop Recording", Width = 100, Height = 25 };
             closeButton.Click += closeButtonHandler;
             recordButton.Click += TakeSnapshotOfBarPath;
-            Canvas.SetBottom(closeButton, 25);
-            Canvas.SetBottom(recordButton, 0);
+            stopButton.Click += StopRecording;
+            initButton.Click += initData;
+
+
             myCanvas.Children.Add(closeButton);
             myCanvas.Children.Add(recordButton);
-
+            myCanvas.Children.Add(initButton);
+            myCanvas.Children.Add(stopButton);
+            Canvas.SetBottom(stopButton, 50);
+            Canvas.SetBottom(closeButton, 0);
+            Canvas.SetBottom(recordButton, 25);
+            Canvas.SetBottom(initButton, 0);
+            Canvas.SetRight(initButton, 0);
 
             if (statMap["feetDistance"])
             {
                 distanceText = new TextBlock();
-                distanceText.Text = "0.0";
+                distanceText.Text = "";
                 distanceText.FontSize = 34;
                 myCanvas.Children.Add(distanceText);
 
@@ -895,6 +1046,16 @@ namespace K4W.BasicOverview.UI
             testWindow.Title = "Canvas Sample";
             testWindow.Content = myCanvas;
             testWindow.Show();
+        }
+
+        private void StopRecording(object sender, RoutedEventArgs e)
+        {
+            recording = false;
+        }
+
+        void initData(Object sender, EventArgs e)
+        {
+            buttonClick = true;
         }
 
         /// <summary>

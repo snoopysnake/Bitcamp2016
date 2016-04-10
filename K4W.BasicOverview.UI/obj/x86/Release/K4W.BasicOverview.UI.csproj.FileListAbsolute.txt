@@ -1,0 +1,8 @@
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\bin\x86\Release\K4W.BasicOverview.UI.exe.config
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\x86\Release\MainWindow.baml
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\x86\Release\MainWindow.g.cs
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\x86\Release\App.g.cs
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\x86\Release\K4W.BasicOverview.UI_MarkupCompile.cache
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\x86\Release\K4W.BasicOverview.UI.g.resources
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\x86\Release\K4W.BasicOverview.UI.Properties.Resources.resources
+C:\Users\Michael\Documents\Visual Studio 2015\Projects\Bitcamp2016\K4W.BasicOverview.UI\obj\x86\Release\K4W.BasicOverview.UI.csproj.GenerateResource.Cache

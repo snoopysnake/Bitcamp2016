@@ -5,7 +5,7 @@
         WindowStartupLocation="CenterScreen" WindowState="Maximized" Icon="Resources/icon.png">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50px" />
+            <RowDefinition Height="100px" />
             <RowDefinition Height="2" />
             <RowDefinition Height="*" />
             <RowDefinition Height="2" />
@@ -19,6 +19,9 @@
             <CheckBox Margin="10,10,3,3" Grid.Column="0" Grid.Row="2" Name="ShouldersCheckbox" FontSize="12" Checked="HandleCheckboxChange" Unchecked="HandleCheckboxChange">Shoulders</CheckBox>
             <CheckBox Margin="10,10,3,3" Grid.Column="0" Grid.Row="3" Name="HipsCheckbox" FontSize="12" Checked="HandleCheckboxChange" Unchecked="HandleCheckboxChange">Hips</CheckBox>
             <CheckBox Margin="10,10,3,3" Grid.Column="0" Grid.Row="4" Name="KneesCheckbox" FontSize="12" Checked="HandleCheckboxChange" Unchecked="HandleCheckboxChange">Knees</CheckBox>
+            <TextBlock Name="BarAngle" Margin="10,10,3,3" FontSize="34" Text="Bar Angle:" VerticalAlignment="Center"/>
+            <TextBlock Name="DepthChecker" Margin="10,10,3,3" FontSize="34" Text="Depth Status: " VerticalAlignment="Center"/>
+            
             <!--<CheckBox Grid.Column="1" Grid.Row="2" Name="SpineCheckbox" FontSize="12">Spine</CheckBox>-->
             <!--<Image Source="Resources/k4w.png" HorizontalAlignment="Center" VerticalAlignment="Center" MaxHeight="100" />
             <TextBlock Text="Second Generation Kinect - Basic Overview" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Margin="20,0,0,0" Foreground="#FF2A2A2A" />-->
